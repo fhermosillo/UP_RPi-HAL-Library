@@ -73,7 +73,7 @@ int main()
 		
 		
 		printf("Register to read: ");
-		scanf("%d", &data);
+		scanf("%d", &reg_addr);
 		// Reg validation
 		if(reg_addr >= OV7670_LOWER_REG && reg_addr <= OV7670_UPPER_REG)
 		{
