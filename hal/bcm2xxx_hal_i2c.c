@@ -1,10 +1,10 @@
 #include "bcm2xxx_hal_i2c.h"
-
+#include <stdlib.h>
 
 #define I2C0_BASE		0x00205000U
 #define I2C1_BASE		0x00804000U
 //#define I2C2_BASE		0x00805000U
-#define I2C3_BASE		0x00805600U
+#define I2C3_BASE		0xCU
 #define I2C4_BASE		0x00805800U
 #define I2C5_BASE		0x00805A00U
 #define I2C6_BASE		0x00805C00U
@@ -52,58 +52,47 @@
 #define I2C6_SDA_GPIO1  22
 #define I2C6_SCL_GPIO1  23
 
-static I2C_t *I2C0 = NULL;
-static I2C_t *I2C1 = NULL;
-static I2C_t *I2C3 = NULL;
-static I2C_t *I2C4 = NULL;
-static I2C_t *I2C5 = NULL;
-static I2C_t *I2C6 = NULL;
-
 
 I2C_t *HAL_I2C_Init(eI2CDrive i2cx_driver)
 {
 	// Set driver
-	I2C_t *I2Cx = NULL;
-	volatile uint32_t *perif_base = HAL_get_peri_base();
+	I2C_t *I2Cx = (I2C_t *)malloc(sizeof(I2C_t));
+	if(HAL_get_peri_base() == MAP_FAILED || I2Cx == NULL)
+	{
+		return NULL;
+	}
+	
 	switch(i2cx_driver)
 	{
 		case I2C0_DRIVE:
-			I2C0 = (I2C_t *)(perif_base + I2C0_BASE/4);
-			I2Cx = I2C0;
+			I2Cx = (I2C_t *)(HAL_get_peri_base() + I2C0_BASE/4);
 		break;
 		
 		case I2C1_DRIVE:
-			I2C1 = (I2C_t *)(perif_base + I2C1_BASE/4);
-			I2Cx = I2C1;
+			I2Cx = (I2C_t *)(HAL_get_peri_base() + I2C1_BASE/4);
 
 		break;
 		
 		case I2C3_DRIVE:
-			I2C3 = (I2C_t *)(perif_base + I2C3_BASE/4);
-			I2Cx = I2C3;
+			I2Cx = (I2C_t *)(HAL_get_peri_base() + I2C3_BASE/4);
 		break;
 		
 		case I2C4_DRIVE:
-			I2C4 = (I2C_t *)(perif_base + I2C4_BASE/4);
-			I2Cx = I2C4;
+			I2Cx = (I2C_t *)(HAL_get_peri_base() + I2C4_BASE/4);
 		break;
 		
 		case I2C5_DRIVE:
-			I2C5 = (I2C_t *)(perif_base + I2C5_BASE/4);
-			I2Cx = I2C5;
+			I2Cx = (I2C_t *)(HAL_get_peri_base() + I2C5_BASE/4);
 		break;
 		
 		case I2C6_DRIVE:
-			I2C6 = (I2C_t *)(perif_base + I2C6_BASE/4);
-			I2Cx = I2C6;
+			I2Cx = (I2C_t *)(HAL_get_peri_base() + I2C6_BASE/4);
 		break;
 		
 		default:
-			return I2Cx;
+			return NULL;
 		break;
 	}
-	
-	
 	
 	bitclr(I2Cx->C,15);	// Disable I2Cx
 	bitset(I2Cx->C,10);	// Disable RX interrupts

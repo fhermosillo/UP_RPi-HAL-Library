@@ -117,10 +117,9 @@ typedef enum
 /* Exported macros ---------------------------------------------------*/
 
 /* Exported variables ------------------------------------------------*/
-extern GPIO_t *GPIO;	/*!<  GPIO peripheral */
 
 /* Exported functions ------------------------------------------------*/
-void HAL_GPIO_Init(void);
+GPIO_t *HAL_GPIO_Init(void);
 
 eGPIOState HAL_GPIO_Read(uint8_t pin);
 
