@@ -38,16 +38,12 @@ typedef struct
 #define CM_GPIO_MAXDIV	40995
 #define CM_GPIO_MINDIV	1
 
-
 /* Exported macros ---------------------------------------------------*/
 
 /* Exported variables ------------------------------------------------*/
-extern CM_GPIO_t *CM_GPIO0;
-extern CM_GPIO_t *CM_GPIO1;
-extern CM_GPIO_t *CM_GPIO2;
 
 /* Exported functions ------------------------------------------------*/
-int HAL_CM_Init(eCMDrive drive);
+CM_GPIO_t *HAL_CM_Init(eCMDrive drive);
 
 uint32_t HAL_CM_Set_ClkSrc(CM_GPIO_t *CM_GPIOx, eCMClkSource src);
 

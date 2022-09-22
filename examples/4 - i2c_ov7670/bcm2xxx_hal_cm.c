@@ -1,4 +1,5 @@
 #include "bcm2xxx_hal_cm.h"
+#include <stdlib.h>
 
 
 #define CM_GPIO0_BASE	0x00101070
@@ -33,33 +34,30 @@
 #define CM_HDMI_FREQUENCY	216000000
 
 
-CM_GPIO_t *CM_GPIO0 = NULL;
-CM_GPIO_t *CM_GPIO1 = NULL;
-CM_GPIO_t *CM_GPIO2 = NULL;
-
-
-int HAL_CM_Init(eCMDrive drive)
+CM_GPIO_t HAL_CM_Init(eCMDrive drive)
 {
-	CM_GPIO_t *CM_GPIOx = NULL;
+	CM_GPIO_t *CM_GPIOx = (CM_GPIO_t *)malloc(sizeof(CM_GPIO_t));
+	if(CM_GPIOx != NULL || HAL_get_peri_base() == MAP_FAILED)
+	{
+		return NULL;
+	}
+	
 	switch(drive)
 	{
 		case CM_DRIVER_GPIO0:
-			CM_GPIO0 = (CM_GPIO_t *)(HAL_get_peri_base() + CM_GPIO0_BASE/4);
-			CM_GPIOx = CM_GPIO0;
+			CM_GPIOx = (CM_GPIO_t *)(HAL_get_peri_base() + CM_GPIO0_BASE/4);
 		break;
 		
 		case CM_DRIVER_GPIO1:
-			CM_GPIO1 = (CM_GPIO_t *)(HAL_get_peri_base() + CM_GPIO1_BASE/4);
-			CM_GPIOx = CM_GPIO1;
+			CM_GPIOx = (CM_GPIO_t *)(HAL_get_peri_base() + CM_GPIO1_BASE/4);
 		break;
 		
 		case CM_DRIVER_GPIO2:
-			CM_GPIO2 = (CM_GPIO_t *)(HAL_get_peri_base() + CM_GPIO2_BASE/4);
-			CM_GPIOx = CM_GPIO2;
+			CM_GPIOx = (CM_GPIO_t *)(HAL_get_peri_base() + CM_GPIO2_BASE/4);
 		break;
 		
 		default:
-			return -1;
+			return NULL;
 		break;
 	}
 	

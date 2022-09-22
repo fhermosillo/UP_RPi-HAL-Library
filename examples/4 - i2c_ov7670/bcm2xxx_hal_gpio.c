@@ -37,9 +37,11 @@
 
 GPIO_t *GPIO;
 
-void HAL_GPIO_Init(void)
+GPIO_t *HAL_GPIO_Init(void)
 {
 	GPIO = (GPIO_t *)(HAL_get_peri_base() + GPIO_BASE/4);
+	
+	return GPIO;
 }
 
 void HAL_GPIO_Set_Mode(uint8_t pin, eGPIOMode mode)
