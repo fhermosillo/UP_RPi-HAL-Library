@@ -11,49 +11,51 @@ extern "C" {
 /* Exported types ----------------------------------------------------*/
 typedef enum
 {
-	CM_SOURCE_GND = 0,
-	CM_SOURCE_OSC,
-	CM_SOURCE_DBG0,
-	CM_SOURCE_DBG1,
-	CM_SOURCE_PLLA,
-	CM_SOURCE_PLLC,
-	CM_SOURCE_PLLD,
-	CM_SOURCE_HDMI
-}eCMClkSource;
+	CM_SOURCE_GND = 0,	/*!< Freq = 0Hz */
+	CM_SOURCE_OSC,		/*!< Freq = 19,200,000 Hz */
+	CM_SOURCE_DBG0,		/*!< Freq = Hz */
+	CM_SOURCE_DBG1,		/*!< Freq = Hz */
+	CM_SOURCE_PLLA,		/*!< Freq = Hz */
+	CM_SOURCE_PLLC,		/*!< Freq = 1,000,000,000 Hz */
+	CM_SOURCE_PLLD,		/*!< Freq = 500,000,000 Hz */
+	CM_SOURCE_HDMI		/*!< Freq = 216,000,000 Hz */
+} eCMClock;
 
 typedef enum
 {
-	CM_DRIVER_GPIO0 = 0,
-	CM_DRIVER_GPIO1,
-	CM_DRIVER_GPIO2
-}eCMDrive;
+	CM_GPIO0_DRIVER = 0,
+	CM_GPIO1_DRIVER,
+	CM_GPIO2_DRIVER,
+	CM_PWM_DRIVER,
+	CM_PCM_DRIVER
+} eCMDrive;
 
 typedef struct
 {
-	volatile uint32_t GPCTL;
-	volatile uint32_t GPDIV;
-} CM_GPIO_t;
+	volatile uint32_t CTL;
+	volatile uint32_t DIV;
+} CM_t;
 
 /* Exported constants ------------------------------------------------*/
-#define CM_GPIO_MAXDIV	40995
-#define CM_GPIO_MINDIV	1
 
 /* Exported macros ---------------------------------------------------*/
 
 /* Exported variables ------------------------------------------------*/
 
 /* Exported functions ------------------------------------------------*/
-CM_GPIO_t *HAL_CM_Init(eCMDrive drive);
+CM_t *HAL_CM_Init(eCMDrive drive);
 
-uint32_t HAL_CM_Set_ClkSrc(CM_GPIO_t *CM_GPIOx, eCMClkSource src);
+void HAL_CM_DeInit(CM_t *CMx);
 
-void HAL_CM_Stop(CM_GPIO_t *CM_GPIOx);
+uint32_t HAL_CM_Set_Clock(CM_t *CMx, eCMClock clk);
 
-void HAL_CM_Set_Freq(CM_GPIO_t *CM_GPIOx, uint32_t freq);
+void HAL_CM_Stop(CM_t *CMx);
 
-void HAL_CM_Start(CM_GPIO_t *CM_GPIOx);
+uint32_t HAL_CM_Set_Freq(CM_t *CMx, uint32_t freq);
 
-uint32_t HAL_CM_Get_Freq(CM_GPIO_t *CM_GPIOx);
+void HAL_CM_Start(CM_t *CMx);
+
+uint32_t HAL_CM_Get_Freq(CM_t *CMx);
 
 #ifdef __cplusplus
 }

@@ -1,19 +1,30 @@
 #include "bcm2xxx_hal_cm.h"
 #include <stdlib.h>
 
+#define CLOCK_BASE		0x00101000U
+#define CM_GPIO0_BASE	(CLOCK_BASE + 0x00000070U)
+#define CM_GPIO1_BASE	(CLOCK_BASE + 0x00000078U)
+#define CM_GPIO2_BASE	(CLOCK_BASE + 0x00000080U)
+#define CM_PWM_BASE		(CLOCK_BASE + 0x000000A0U)
 
-#define CM_GPIO0_BASE	0x00101070
-#define CM_GPIO1_BASE	0x00101078
-#define CM_GPIO2_BASE	0x00101080
+#define CM_CTL 	0x00000000U
+#define CM_DIV 	0x00000004U
 
-#define CM_GP0CTL	0x00101070
-#define CM_GP0DIV	0x00101074
-#define CM_GP1CTL	0x00101078
-#define CM_GP1DIV	0x0010107C
-#define CM_GP2CTL	0x00101080
-#define CM_GP2DIV	0x00101084
+#define CM_CTL_DISABLE	0x0000060FU
+#define CM_CTL_ENABLE	0x00000010U
+#define CM_CTL_BUSY		0x00000080U
+#define CM_CTL_PASSWD	0x5A000000U
+#define CM_CTL_MASH		0x00000600U
+#define CM_CTL_MASH_0	0x00000000U
+#define CM_CTL_MASH_1	0x00000200U
+#define CM_CTL_MASH_2	0x00000400U
+#define CM_CTL_MASH_3	0x00000600U
 
-#define CM_PASSWORD (0x5A << 24)
+#define CM_DIV_DIVI		0x00FFF000U
+#define CM_DIV_DIVF		0x00000FFFU
+
+
+
 
 
 // GPCLK0,1,2 functions - GPIO4,5,6
@@ -33,27 +44,35 @@
 #define CM_PLLD_FREQUENCY	500000000
 #define CM_HDMI_FREQUENCY	216000000
 
+#define CM_DIVMAX	4095
+#define CM_DIVMIN	1
 
-CM_GPIO_t HAL_CM_Init(eCMDrive drive)
+static uint32_t CM_Bus_Freq(CM_t *CMx);
+
+CM_t *HAL_CM_Init(eCMDrive drive)
 {
-	CM_GPIO_t *CM_GPIOx = (CM_GPIO_t *)malloc(sizeof(CM_GPIO_t));
-	if(CM_GPIOx != NULL || HAL_get_peri_base() == MAP_FAILED)
+	CM_t *CMx = (CM_t *)malloc(sizeof(CM_t));
+	if(CMx == NULL || HAL_get_peri_base() == MAP_FAILED)
 	{
 		return NULL;
 	}
 	
 	switch(drive)
 	{
-		case CM_DRIVER_GPIO0:
-			CM_GPIOx = (CM_GPIO_t *)(HAL_get_peri_base() + CM_GPIO0_BASE/4);
+		case CM_GPIO0_DRIVER:
+			CMx = (CM_t *)(HAL_get_peri_base() + CM_GPIO0_BASE/4);
 		break;
 		
-		case CM_DRIVER_GPIO1:
-			CM_GPIOx = (CM_GPIO_t *)(HAL_get_peri_base() + CM_GPIO1_BASE/4);
+		case CM_GPIO1_DRIVER:
+			CMx = (CM_t *)(HAL_get_peri_base() + CM_GPIO1_BASE/4);
 		break;
 		
-		case CM_DRIVER_GPIO2:
-			CM_GPIOx = (CM_GPIO_t *)(HAL_get_peri_base() + CM_GPIO2_BASE/4);
+		case CM_GPIO2_DRIVER:
+			CMx = (CM_t *)(HAL_get_peri_base() + CM_GPIO2_BASE/4);
+		break;
+		
+		case CM_PWM_DRIVER:
+			CMx = (CM_t *)(HAL_get_peri_base() + CM_PWM_BASE/4);
 		break;
 		
 		default:
@@ -61,45 +80,98 @@ CM_GPIO_t HAL_CM_Init(eCMDrive drive)
 		break;
 	}
 	
-	HAL_CM_Stop(CM_GPIOx);
+	HAL_CM_Stop(CMx);
 	
-	return 0;
+	return CMx;
 
 }
 
-uint32_t HAL_CM_Set_ClkSrc(CM_GPIO_t * CM_GPIOx, eCMClkSource src)
+void HAL_CM_DeInit(CM_t *CMx)
 {
-	CM_GPIOx->GPCTL = CM_PASSWORD | (uint32_t)src;
-	usleep(10);
-	return HAL_CM_Get_Freq(CM_GPIOx);
+	if(CMx != NULL)
+	{
+		free(CMx);
+	}
 }
 
-void HAL_CM_Stop(CM_GPIO_t * CM_GPIOx)
+void HAL_CM_Stop(CM_t * CMx)
 {
-	CM_GPIOx->GPCTL = CM_PASSWORD | (1 << 5);		// Kill clock
-	while(bitcheck(CM_GPIOx->GPCTL,7));					// Wait until clock stop
-}
-
-void HAL_CM_Set_Freq(CM_GPIO_t * CM_GPIOx, uint32_t freq)
-{
-	uint32_t divisor = HAL_CM_Get_Freq(CM_GPIOx)/freq;
-	if(divisor > CM_GPIO_MAXDIV)
-		divisor = CM_GPIO_MAXDIV;
-	else if(divisor < CM_GPIO_MINDIV)
-		divisor = CM_GPIO_MINDIV;
+	// Disable clock
+	uint32_t cm_disable = CMx->CTL & CM_CTL_DISABLE;
+	CMx->CTL = CM_CTL_PASSWD | cm_disable;
 	
-	CM_GPIOx->GPDIV = CM_PASSWORD | (divisor << 12);
-	usleep(10);
+	// Wait until clock will be ready
+	while(CMx->CTL & CM_CTL_BUSY);
 }
 
-void HAL_CM_Start(CM_GPIO_t * CM_GPIOx)
+void HAL_CM_Start(CM_t * CMx)
 {
-	CM_GPIOx->GPCTL |= CM_PASSWORD | (1 << 4);
+	CMx->CTL |= CM_CTL_PASSWD | CM_CTL_ENABLE;
 }
 
-uint32_t HAL_CM_Get_Freq(CM_GPIO_t *CM_GPIOx)
+uint32_t HAL_CM_Set_Clock(CM_t * CMx, eCMClock clk)
 {
-	switch(CM_GPIOx->GPCTL & 0x0000000F)
+	// Stop Clock
+	HAL_CM_Stop(CMx);
+	
+	// Set new clock source
+	CMx->CTL = CM_CTL_PASSWD | (uint32_t)clk;
+	
+	// Start clock
+	HAL_CM_Start(CMx);
+	
+	return CM_Bus_Freq(CMx);
+}
+
+uint32_t HAL_CM_Set_Freq(CM_t * CMx, uint32_t freq)
+{
+	uint32_t freq_src = CM_Bus_Freq(CMx);
+	uint32_t cdiv = freq_src/freq;
+	
+	cdiv = MAX(cdiv,CM_DIVMIN);
+	cdiv = MIN(cdiv,CM_DIVMAX);
+	
+	// Stop Clock
+	HAL_CM_Stop(CMx);
+	
+	// Setup clock frequency (MASH-0)
+	CMx->DIV = CM_CTL_PASSWD | (cdiv << 12);
+	
+	// Start clock
+	HAL_CM_Start(CMx);
+	
+	return freq_src/cdiv;
+}
+
+uint32_t HAL_CM_Get_Freq(CM_t *CMx)
+{
+	uint32_t fsrc = CM_Bus_Freq(CMx);
+	
+	uint32_t MASH = (CMx->CTL & CM_CTL_MASH);
+	uint32_t DIVI = (CMx->DIV & CM_DIV_DIVI) >> 12;
+	uint32_t DIVF = (CMx->DIV & CM_DIV_DIVF);
+	
+	uint32_t f = 0;
+	switch(MASH)
+	{
+		case CM_CTL_MASH_0:
+			f = fsrc/DIVI;
+		break;
+		
+		case CM_CTL_MASH_1:
+		case CM_CTL_MASH_2:
+		case CM_CTL_MASH_3:
+			f = (uint32_t)((float)(fsrc)/((float)(DIVI) + (float)(DIVF)/1024.0F));
+		break;
+	}
+	
+	return f;
+}
+
+
+static uint32_t CM_Bus_Freq(CM_t *CMx)
+{
+	switch(CMx->CTL & 0x0000000F)
 	{	
 		case CM_SOURCE_OSC:
 			return CM_OSC_FREQUENCY;

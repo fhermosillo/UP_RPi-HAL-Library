@@ -64,28 +64,28 @@ I2C_t *HAL_I2C_Init(eI2CDrive i2cx_driver)
 	
 	switch(i2cx_driver)
 	{
-		case I2C0_DRIVE:
+		case I2C0_DRIVER:
 			I2Cx = (I2C_t *)(HAL_get_peri_base() + I2C0_BASE/4);
 		break;
 		
-		case I2C1_DRIVE:
+		case I2C1_DRIVER:
 			I2Cx = (I2C_t *)(HAL_get_peri_base() + I2C1_BASE/4);
 
 		break;
 		
-		case I2C3_DRIVE:
+		case I2C3_DRIVER:
 			I2Cx = (I2C_t *)(HAL_get_peri_base() + I2C3_BASE/4);
 		break;
 		
-		case I2C4_DRIVE:
+		case I2C4_DRIVER:
 			I2Cx = (I2C_t *)(HAL_get_peri_base() + I2C4_BASE/4);
 		break;
 		
-		case I2C5_DRIVE:
+		case I2C5_DRIVER:
 			I2Cx = (I2C_t *)(HAL_get_peri_base() + I2C5_BASE/4);
 		break;
 		
-		case I2C6_DRIVE:
+		case I2C6_DRIVER:
 			I2Cx = (I2C_t *)(HAL_get_peri_base() + I2C6_BASE/4);
 		break;
 		
@@ -102,6 +102,14 @@ I2C_t *HAL_I2C_Init(eI2CDrive i2cx_driver)
 	bitset(I2Cx->C,15);	// Enable I2Cx
 	
 	return I2Cx;
+}
+
+void HAL_I2C_DeInit(I2C_t * i2cx)
+{
+	if(i2cx != NULL)
+	{
+		free(i2cx);
+	}
 }
 
 void HAL_I2C_Set_Speed(I2C_t *i2cx, I2CSpeedMode mode)

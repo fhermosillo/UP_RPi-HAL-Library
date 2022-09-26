@@ -10,14 +10,14 @@ extern "C" {
 
 /* Exported types ----------------------------------------------------*/
 typedef enum {
-	I2C0_DRIVE = 0,
-	I2C1_DRIVE,
-	I2C2_DRIVE,
-	I2C3_DRIVE,
-	I2C4_DRIVE,
-	I2C5_DRIVE,
-	I2C6_DRIVE,
-	I2C7_DRIVE
+	I2C0_DRIVER = 0,
+	I2C1_DRIVER,
+	I2C2_DRIVER,
+	I2C3_DRIVER,
+	I2C4_DRIVER,
+	I2C5_DRIVER,
+	I2C6_DRIVER,
+	I2C7_DRIVER
 } eI2CDrive;
 
 // SCL = core_clock / CDIV
@@ -65,6 +65,7 @@ typedef struct
 
 /* Exported functions ------------------------------------------------*/
 I2C_t *HAL_I2C_Init(eI2CDrive ni2cx);
+void HAL_I2C_DeInit(I2C_t * i2cx);
 
 void HAL_I2C_Set_Address(I2C_t *I2Cx, uint32_t addr);
 
