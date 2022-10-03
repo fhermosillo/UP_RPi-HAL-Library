@@ -81,7 +81,44 @@ typedef enum
 	GPIO_HIGH
 } eGPIOState;
 
+typedef enum
+{
+	GPIO_SLEW_LIMITED=0,
+	GPIO_SLEW_FULL
+}eGPIOSlew;
 
+typedef enum
+{
+	PADS_HYST_DISABLE=0,
+	PADS_HYST_ENABLE
+}eGPIOHyst;
+
+/*
+ * A maximum of 16mA per pin
+ * A total of current from all pins must be least or equal than 51mA:
+ * e.g., if we have 5 leds connected to GPIO0 to GPIO4, each LED consumes
+ * 10mA, the total current is 5*10mA = 50mA, then it is OK. However, if
+ * we have 6 leds connected to GPIO, total current on GPIOs is 6*10mA = 60mA
+ * Then, the Raspberry Pi may reset.
+ */
+typedef enum
+{
+	PADS_DRIVE_2mA=0,
+	PADS_DRIVE_4mA,
+	PADS_DRIVE_6mA,
+	PADS_DRIVE_8mA,
+	PADS_DRIVE_10mA,
+	PADS_DRIVE_12mA,
+	PADS_DRIVE_14mA,
+	PADS_DRIVE_16mA
+}eGPIODrive;
+
+typedef enum
+{
+	GPIO_BANK_0,	/*!< GPIO0 to GPIO27 */
+	GPIO_BANK_1,	/*!< GPIO28 to GPIO45 */
+	GPIO_BANK_2		/*!< GPIO46 to GPIO53 */
+}eGPIOBank;
 
 /* Exported constants ------------------------------------------------*/
 #define GPIO_PIN_0	0
@@ -119,18 +156,22 @@ typedef enum
 /* Exported variables ------------------------------------------------*/
 
 /* Exported functions ------------------------------------------------*/
+// GPIO Initializations
 GPIO_t *HAL_GPIO_Init(void);
 
+// GPIO IO operations
 eGPIOState HAL_GPIO_Read(uint8_t pin);
-
 void HAL_GPIO_Write(uint8_t pin, eGPIOState state);
-
 void HAL_GPIO_Toggle(uint8_t pin);
 
+// GPIO direction
 void HAL_GPIO_Set_Mode(uint8_t pin, eGPIOMode mode);
-
 void HAL_GPIO_Set_PuPd(uint8_t pin, eGPIOPuPd pmode);
 
+// GPIO driver configurations
+void HAL_GPIO_Set_Slew(eGPIOBank bank,  eGPIOSlew slewrate);
+void HAL_GPIO_Set_Hyst(eGPIOBank bank,  eGPIOHyst state);
+void HAL_GPIO_Set_Drive(eGPIOBank bank, eGPIODrive drive);
 
 #ifdef __cplusplus
 }

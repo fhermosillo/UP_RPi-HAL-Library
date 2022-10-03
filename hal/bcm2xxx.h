@@ -33,6 +33,9 @@
 #define MAX(X,Y) (X) > (Y) ? (X) : (Y)
 #define MIN(X,Y) (X) < (Y) ? (X) : (Y)
 
+#define MHZ(x)	(x)*1000000
+#define KHZ(x)	(x)*1000
+
 /* -------------------------------------------------------------------- */
 /* 							External Variables 							*/
 /* -------------------------------------------------------------------- */
@@ -93,5 +96,9 @@ volatile uint32_t *HAL_get_peri_base(void);
  * @return: Core clock frequency
  */
 uint32_t HAL_get_core_freq(void);
+
+
+void HAL_Switch_RealTime(void);
+
 
 #endif /* __BCM2XXX_H */

@@ -35,11 +35,35 @@
 #define GPIO_GPPUD3		0x000000F0U
 
 
+#define PADS0_BASE	0x0010002CU
+#define PADS1_BASE	0x0010030CU
+#define PADS2_BASE	0x00100034U
+
+#define PADS_PASSWORD	0x5A000000U
+#define PADS_SLEW_MASK	0x00000010U
+#define PADS_HYST_MASK	0x00000008U
+#define PADS_DRIVE_MASK	0x00000007U
+
+
 GPIO_t *GPIO;
+volatile uint32_t *PADS0 = NULL;
+volatile uint32_t *PADS1 = NULL;
+volatile uint32_t *PADS2 = NULL;
+
+static void HAL_PADS_Init(void)
+{
+	PADS0 = HAL_get_peri_base() + PADS0_BASE/4;
+	PADS1 = HAL_get_peri_base() + PADS1_BASE/4;
+	PADS2 = HAL_get_peri_base() + PADS2_BASE/4;
+}
 
 GPIO_t *HAL_GPIO_Init(void)
 {
+	if(HAL_get_peri_base() == MAP_FAILED)
+		return NULL;
+	
 	GPIO = (GPIO_t *)(HAL_get_peri_base() + GPIO_BASE/4);
+	HAL_PADS_Init();
 	
 	return GPIO;
 }
@@ -174,3 +198,70 @@ void HAL_GPIO_Toggle(uint8_t pin)
 	}
 }
 
+
+void HAL_GPIO_Set_Slew(eGPIOBank bank,  eGPIOSlew slewrate)
+{
+	uint32_t padsmask = 0;
+	switch(bank)
+	{
+		case GPIO_BANK_0:
+			padsmask = *PADS0 & ~PADS_SLEW_MASK;
+			*PADS0 = PADS_PASSWORD | padsmask | ((uint32_t)slewrate << 4);
+		break;
+		case GPIO_BANK_1:
+			padsmask = *PADS1 & ~PADS_SLEW_MASK;
+			*PADS1 = PADS_PASSWORD | padsmask | ((uint32_t)slewrate << 4);
+		break;
+		case GPIO_BANK_2:
+			padsmask = *PADS2 & ~PADS_SLEW_MASK;
+			*PADS2 = PADS_PASSWORD | padsmask | ((uint32_t)slewrate << 4);
+		break;
+		default:
+		break;
+	}
+}
+
+void HAL_GPIO_Set_Hyst(eGPIOBank bank,  eGPIOHyst state)
+{
+	uint32_t padsmask = 0;
+	switch(bank)
+	{
+		case GPIO_BANK_0:
+			padsmask = *PADS0 & ~PADS_HYST_MASK;
+			*PADS0 = PADS_PASSWORD | padsmask | ((uint32_t)state << 3);
+		break;
+		case GPIO_BANK_1:
+			padsmask = *PADS1 & ~PADS_HYST_MASK;
+			*PADS1 = PADS_PASSWORD | padsmask | ((uint32_t)state << 3);
+		break;
+		case GPIO_BANK_2:
+			padsmask = *PADS2 & ~PADS_HYST_MASK;
+			*PADS2 = PADS_PASSWORD | padsmask | ((uint32_t)state << 3);
+		break;
+		default:
+		break;
+	}
+}
+
+
+void HAL_GPIO_Set_Drive(eGPIOBank bank, eGPIODrive drive)
+{
+	uint32_t padsmask = 0;
+	switch(bank)
+	{
+		case GPIO_BANK_0:
+			padsmask = *PADS0 & ~PADS_DRIVE_MASK;
+			*PADS0 = PADS_PASSWORD | padsmask | (uint32_t)drive;
+		break;
+		case GPIO_BANK_1:
+			padsmask = *PADS1 & ~PADS_DRIVE_MASK;
+			*PADS1 = PADS_PASSWORD | padsmask | (uint32_t)drive;
+		break;
+		case GPIO_BANK_2:
+			padsmask = *PADS2 & ~PADS_DRIVE_MASK;
+			*PADS2 = PADS_PASSWORD | padsmask | (uint32_t)drive;
+		break;
+		default:
+		break;
+	}
+}

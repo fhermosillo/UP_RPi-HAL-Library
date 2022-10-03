@@ -1,4 +1,7 @@
 #include "bcm2xxx.h"
+#include <sched.h>
+#include <sys/mman.h>
+#include <string.h>
 
 void *peri_base_ptr = MAP_FAILED;
 size_t peri_size = 0;
@@ -47,6 +50,8 @@ void HAL_read_peri_addr(uint32_t model, uint32_t *addr, size_t *sz)
 		*addr = 0;
 		*sz = 0;
 	}
+	
+	HAL_Switch_RealTime();
 }
 
 void HAL_memory_map(uint32_t model)
@@ -120,4 +125,14 @@ int HAL_is_peri_open(void)
 uint32_t HAL_get_core_freq(void)
 {
 	return core_freq;
+}
+
+
+void HAL_Switch_RealTime(void)
+{
+	struct sched_param sp;
+	memset(&sp, 0, sizeof(sp));
+	sp.sched_priority = sched_get_priority_max(SCHED_FIFO);
+	sched_setscheduler(0, SCHED_FIFO, &sp);
+	mlockall(MCL_CURRENT | MCL_FUTURE);
 }
