@@ -50,8 +50,6 @@ void HAL_read_peri_addr(uint32_t model, uint32_t *addr, size_t *sz)
 		*addr = 0;
 		*sz = 0;
 	}
-	
-	HAL_Switch_RealTime();
 }
 
 void HAL_memory_map(uint32_t model)

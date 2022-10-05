@@ -8,7 +8,6 @@ extern "C" {
 /* Includes ----------------------------------------------------------*/
 #include "bcm2xxx.h"
 #include "bcm2xxx_hal_gpio.h"
-#include "bcm2xxx_delay.h"
 #include "bcm2xxx_hal_cm.h"
 
 /* Exported types ----------------------------------------------------*/
@@ -59,7 +58,7 @@ void HAL_PWM_Setup_Channel(PWM_t *PWMx, ePWMChannel channel);
 
 uint32_t HAL_PWM_Set_Frequency(PWM_t *PWMx, ePWMChannel channel, uint32_t freq);
 
-void HAL_PWM_Set_Duty(PWM_t *PWMx, ePWMChannel channel, float duty);
+void HAL_PWM_Set_Duty(PWM_t *PWMx, ePWMChannel channel, uint8_t duty);
 
 void HAL_PWM_Start(PWM_t *PWMx, ePWMChannel channel);
 void HAL_PWM_Stop(PWM_t *PWMx, ePWMChannel channel);

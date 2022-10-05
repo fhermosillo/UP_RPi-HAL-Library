@@ -23,12 +23,14 @@ typedef enum
 
 typedef enum
 {
-	CM_GPIO0_DRIVER = 0,
-	CM_GPIO1_DRIVER,
-	CM_GPIO2_DRIVER,
-	CM_PWM_DRIVER,
-	CM_PCM_DRIVER
-} eCMDrive;
+	CM_GPIO0_CLOCK = 0,
+	CM_GPIO1_CLOCL,
+	CM_GPIO2_CLOCK,
+	CM_PWM_CLOCK,
+	CM_PCM_CLOCK,
+	CM_UART_CLOCK,
+	CM_TIMER_CLOCK
+} eCMDriver;
 
 typedef struct
 {
@@ -43,7 +45,7 @@ typedef struct
 /* Exported variables ------------------------------------------------*/
 
 /* Exported functions ------------------------------------------------*/
-CM_t *HAL_CM_Init(eCMDrive drive);
+CM_t *HAL_CM_Init(eCMDriver drive);
 
 void HAL_CM_DeInit(CM_t *CMx);
 

@@ -90,9 +90,9 @@ SPI_t *HAL_SPI_Init(eSPIDriver SPIx_driver)
 	}
 	
 	// Reset registers
-	uint32_t cs = SPIx->CS;
+	uint32_t cs = 0x00000000U;
 	// Disable SPI interrupts and transfer
-	cs &= ~(SPI_CS_INTR | SPI_CS_INTD | SPI_CS_DMAEN | SPI_CS_TA);
+	//cs &= ~(SPI_CS_INTR | SPI_CS_INTD | SPI_CS_DMAEN | SPI_CS_TA);
 	
 	// Clear DONE bit
 	cs |= SPI_CS_DONE;
@@ -136,6 +136,11 @@ void HAL_SPI_Set_Chip(SPI_t *SPIx, eSPIChip chip, eSPIChipPol chip_pol)
 	// Setup chip select
 	SPIx->CS &= ~SPI_CS_CHIP_MASK;
 	SPIx->CS |= (uint32_t)chip;
+}
+
+void HAL_SPI_Set_ClockDiv(SPI_t*SPIx, eSPIDivider cdiv)
+{
+	SPIx->CLK = (uint32_t)cdiv;
 }
 
 void HAL_SPI_Set_Baud(SPI_t *SPIx, uint32_t baudios)

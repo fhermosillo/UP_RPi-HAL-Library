@@ -93,9 +93,9 @@ uint32_t HAL_PWM_Set_Frequency(PWM_t *PWMx, ePWMChannel channel, uint32_t freq)
 	
 	// Setup PWM Clock Manager
 	CM_t *CM_PWM = HAL_CM_Init(CM_PWM_DRIVER);
-	HAL_CM_Set_Clock(CM_PWM, CM_SOURCE_PLLD);
-	HAL_CM_Set_Freq(CM_PWM,20000000);
-	HAL_CM_Start(CM_PWM);
+	//HAL_CM_Set_Clock(CM_PWM, CM_SOURCE_PLLD);
+	//HAL_CM_Set_Freq(CM_PWM,20000000);
+	//HAL_CM_Start(CM_PWM);
 
 	// Read frequency
 	uint32_t fsrc = HAL_CM_Get_Freq(CM_PWM);	// PWM clock frequency

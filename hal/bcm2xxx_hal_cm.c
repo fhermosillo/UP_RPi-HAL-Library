@@ -6,6 +6,9 @@
 #define CM_GPIO1_BASE	(CLOCK_BASE + 0x00000078U)
 #define CM_GPIO2_BASE	(CLOCK_BASE + 0x00000080U)
 #define CM_PWM_BASE		(CLOCK_BASE + 0x000000A0U)
+#define CM_PCM_BASE		(CLOCK_BASE + 0x00000098U)
+#define CM_UART_BASE	(CLOCK_BASE + 0x000000F0U)
+#define CM_TIMER_BASE	(CLOCK_BASE + 0x000000E8U)
 
 #define CM_CTL 	0x00000000U
 #define CM_DIV 	0x00000004U
@@ -49,7 +52,7 @@
 
 static uint32_t CM_Bus_Freq(CM_t *CMx);
 
-CM_t *HAL_CM_Init(eCMDrive drive)
+CM_t *HAL_CM_Init(eCMDriver drive)
 {
 	CM_t *CMx = (CM_t *)malloc(sizeof(CM_t));
 	if(CMx == NULL || HAL_get_peri_base() == MAP_FAILED)
@@ -75,12 +78,24 @@ CM_t *HAL_CM_Init(eCMDrive drive)
 			CMx = (CM_t *)(HAL_get_peri_base() + CM_PWM_BASE/4);
 		break;
 		
+		case CM_PCM_DRIVER:
+			CMx = (CM_t *)(HAL_get_peri_base() + CM_PCM_BASE/4);
+		break;
+		
+		case CM_UART_DRIVER:
+			CMx = (CM_t *)(HAL_get_peri_base() + CM_UART_BASE/4);
+		break;
+		
+		case CM_TIMER_DRIVER:
+			CMx = (CM_t *)(HAL_get_peri_base() + CM_TIMER_BASE/4);
+		break;
+		
 		default:
 			return NULL;
 		break;
 	}
 	
-	HAL_CM_Stop(CMx);
+	//HAL_CM_Stop(CMx);
 	
 	return CMx;
 
