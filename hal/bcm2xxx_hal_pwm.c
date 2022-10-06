@@ -1,5 +1,4 @@
 #include "bcm2xxx_hal_pwm.h"
-#include <stdlib.h>
 
 // PWM Base
 #define PWM0_BASE		0x0020C000U
@@ -92,7 +91,7 @@ uint32_t HAL_PWM_Set_Frequency(PWM_t *PWMx, ePWMChannel channel, uint32_t freq)
 	HAL_PWM_Stop(PWMx, channel);
 	
 	// Setup PWM Clock Manager
-	CM_t *CM_PWM = HAL_CM_Init(CM_PWM_DRIVER);
+	CM_t *CM_PWM = HAL_CM_Init(CM_PWM_CLOCK);
 	//HAL_CM_Set_Clock(CM_PWM, CM_SOURCE_PLLD);
 	//HAL_CM_Set_Freq(CM_PWM,20000000);
 	//HAL_CM_Start(CM_PWM);

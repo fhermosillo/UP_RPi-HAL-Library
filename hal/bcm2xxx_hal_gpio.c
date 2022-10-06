@@ -243,7 +243,7 @@ void HAL_GPIO_Set_Hyst(eGPIOBank bank,  eGPIOHyst state)
 	}
 }
 
-void HAL_GPIO_Set_Drive(uint32_t pin, ePADSDrive drive)
+void HAL_GPIO_Set_Drive(eGPIOBank bank, eGPIODrive drive)
 {
 	uint32_t padsmask = 0;
 	switch(bank)

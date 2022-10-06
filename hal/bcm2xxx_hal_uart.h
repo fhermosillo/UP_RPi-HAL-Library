@@ -8,14 +8,14 @@ extern "C" {
 /* Includes ----------------------------------------------------------*/
 #include "bcm2xxx.h"
 #include "bcm2xxx_hal_gpio.h"
-
+#include "bcm2xxx_hal_cm.h"
 /* Exported types ----------------------------------------------------*/
 typedef enum {
-	UART0_DRIVER = 0,	/* Only two CS Pines */
+	UART0_DRIVER = 0,	/*  */
+	UART2_DRIVER,		/* Only RPI4 */
 	UART3_DRIVER,		/* Only RPI4 */
 	UART4_DRIVER,		/* Only RPI4 */
 	UART5_DRIVER,		/* Only RPI4 */
-	UART6_DRIVER			/* Only RPI4 */
 } eUARTDriver;
 
 typedef struct
@@ -55,6 +55,8 @@ typedef enum
 
 typedef enum
 {
+	UART_FIFO_DISABLE=0,
+	UART_FIFO_ENABLE
 }eUARTFifo;
 
 typedef enum
@@ -85,7 +87,7 @@ typedef struct
 /* Exported functions ------------------------------------------------*/
 
 // Initialization functions
-UART_t *HAL_UART_Init(eUARTDrive nUARTx);
+UART_t *HAL_UART_Init(eUARTDriver nUARTx);
 
 // Control functions
 void HAL_UART_Config(UART_t *UARTx, UARTConfig_t cfg);

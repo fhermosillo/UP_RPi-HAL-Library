@@ -24,7 +24,7 @@ typedef enum
 typedef enum
 {
 	CM_GPIO0_CLOCK = 0,
-	CM_GPIO1_CLOCL,
+	CM_GPIO1_CLOCK,
 	CM_GPIO2_CLOCK,
 	CM_PWM_CLOCK,
 	CM_PCM_CLOCK,

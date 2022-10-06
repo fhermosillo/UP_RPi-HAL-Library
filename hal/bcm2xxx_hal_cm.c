@@ -62,31 +62,31 @@ CM_t *HAL_CM_Init(eCMDriver drive)
 	
 	switch(drive)
 	{
-		case CM_GPIO0_DRIVER:
+		case CM_GPIO0_CLOCK:
 			CMx = (CM_t *)(HAL_get_peri_base() + CM_GPIO0_BASE/4);
 		break;
 		
-		case CM_GPIO1_DRIVER:
+		case CM_GPIO1_CLOCK:
 			CMx = (CM_t *)(HAL_get_peri_base() + CM_GPIO1_BASE/4);
 		break;
 		
-		case CM_GPIO2_DRIVER:
+		case CM_GPIO2_CLOCK:
 			CMx = (CM_t *)(HAL_get_peri_base() + CM_GPIO2_BASE/4);
 		break;
 		
-		case CM_PWM_DRIVER:
+		case CM_PWM_CLOCK:
 			CMx = (CM_t *)(HAL_get_peri_base() + CM_PWM_BASE/4);
 		break;
 		
-		case CM_PCM_DRIVER:
+		case CM_PCM_CLOCK:
 			CMx = (CM_t *)(HAL_get_peri_base() + CM_PCM_BASE/4);
 		break;
 		
-		case CM_UART_DRIVER:
+		case CM_UART_CLOCK:
 			CMx = (CM_t *)(HAL_get_peri_base() + CM_UART_BASE/4);
 		break;
 		
-		case CM_TIMER_DRIVER:
+		case CM_TIMER_CLOCK:
 			CMx = (CM_t *)(HAL_get_peri_base() + CM_TIMER_BASE/4);
 		break;
 		

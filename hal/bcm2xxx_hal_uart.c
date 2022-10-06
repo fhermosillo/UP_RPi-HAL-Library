@@ -34,7 +34,7 @@
 
 #ifndef DIV_ROUND_UP
 #define DIV_ROUND_UP(NUM,DEN)  (((NUM) + (DEN) - 1) / (DEN))
-#enif
+#endif
 
 UART_t *HAL_UART_Init(eUARTDriver UARTx_driver)
 {
@@ -83,7 +83,7 @@ UART_t *HAL_UART_Init(eUARTDriver UARTx_driver)
 	// PULL UP DISABLE
 	
 	// Clear Pending Interrupts
-	UARTx->ICR = 0x7FF
+	UARTx->ICR = 0x7FF;
 	UARTx->IMSC = 0x00000000U;
 	
 	// Disable DMA
@@ -161,7 +161,7 @@ void HAL_UART_Set_Baud(UART_t *UARTx, uint32_t baudrate)
 	HAL_UART_Stop(UARTx);
 	
 	// Setup UART baud rate
-	CM_t *CM_UART = HAL_CM_Init(CM_UART_DRIVER);
+	CM_t *CM_UART = HAL_CM_Init(CM_UART_CLOCK);
 	float BAUDDIV = (float)HAL_CM_Get_Freq(CM_UART)/(16.0F*(float)baudrate);
 	
 	// Integer part of Baud rate divisor
@@ -199,7 +199,7 @@ void HAL_UART_Write(UART_t *UARTx, uint8_t data)
 	while ( bitcheck(UARTx->FR,5) );
 	
 	// TX Data
-	UART0->DR = DATA;
+	UARTx->DR = data;
 }
 
 uint8_t HAL_UART_Read(UART_t *UARTx)
@@ -210,7 +210,7 @@ uint8_t HAL_UART_Read(UART_t *UARTx)
 	
 	// Wait until RX FIFO is not empty
     while ( bitcheck(UARTx->FR,4) );
-    return UART0->DR & 0x000000FFU;
+    return UARTx->DR & 0x000000FFU;
 }
 
 void HAL_UART_MultiWrite(UART_t *UARTx, uint8_t *buf, size_t len)
