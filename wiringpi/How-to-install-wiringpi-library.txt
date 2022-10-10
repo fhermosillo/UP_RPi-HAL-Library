@@ -1,0 +1,13 @@
+Install WiringPi library
+1. Run
+	sudo apt-get install git-core
+	sudo apt-get purge wiringpi
+	hash -r
+	git clone https://github.com/WiringPi/WiringPi.git
+	cd WiringPi
+	git pull origin
+	./build
+
+2. Run
+	gpio -v
+	gpio readall
