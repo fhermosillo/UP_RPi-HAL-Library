@@ -1,0 +1,48 @@
+1. Run
+	sudo mousepad /etc/network/interfaces
+2. Add
+	auto lo
+	iface eth0 inet dhcp
+	
+	auto wlan0
+	allow-hotplug wlan0
+	iface wlan0 inet dhcp
+	 pre-up wpa_supplicant -B -D wext -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf
+	 post-down killall -q wpa_supplicant
+3. Save
+
+4. Run
+	sudo mousepad /etc/dhcpcd.conf
+5. Add at the end
+	inteface wlan0
+	env ifwireless = 1
+	env wpa_supplicant_driver = wext, nl80211
+6. Save
+
+7. Reboot
+	sudo reboot
+8. It should display: No wirless intefaces found
+9. Run
+	sudo mousepad /etc/wpa_supplicant/wpa_supplicant.conf
+10. Add
+	network={
+	 ssid="SSID"
+	 priorit=1
+	 proto=RSN
+	 key_mgmt=WPA-EAP
+	 pairwise=CCMP
+	 auth_alg=OPEN
+	 eap=PEAP
+	 identity="EMAIL@up.edu.mx"
+	 password="PASSWORD"
+	 phase1="peaplabel=0"
+	 phase2="auth=MSCHAPV2"
+	}
+
+11. Run
+	ifconfig
+	sudo ifup wlan0
+	ifconfig
+	iwgetid
+	iwconfig
+	ping 8.8.8.8
