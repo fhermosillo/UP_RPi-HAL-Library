@@ -11,3 +11,6 @@ Install WiringPi library
 2. Run
 	gpio -v
 	gpio readall
+
+3. On a Geany project  > Build > Set Build commands > 
+on the Build space add -lwiringPi at the end
