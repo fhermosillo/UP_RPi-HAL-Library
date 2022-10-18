@@ -21,7 +21,7 @@ extern "C" {
 /* Exported functions ------------------------------------------------*/
 int delay_ms(long ms);
 int delay_us(long us);
-
+void delay_cycles(long cycles);
 #ifdef __cplusplus
 }
 #endif
