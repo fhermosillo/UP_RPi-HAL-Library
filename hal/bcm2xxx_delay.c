@@ -36,18 +36,18 @@ int delay_us(long us)
     
     unsigned int usecs = us%1000000;
     unsigned int wsecs = us / 1000000;
-
-    ts.tv_sec = wsecs;
-    ts.tv_nsec = usecs * 1000L;
+	
+	ts.tv_sec = wsecs;
+	ts.tv_nsec = usecs * 1000L;
     
 	res = nanosleep(&ts, NULL);
 
     return res;
 }
 
-void delay_cycles(uint32_t cycles)
+void delay_cycles(long cycles)
 {
-	for (int i = 0; i < cycles; ++i)
+	for (long i = 0; i < cycles; ++i)
 	{
 		asm volatile ("");
 	}
