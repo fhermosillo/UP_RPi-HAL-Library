@@ -23,8 +23,8 @@ int main()
 	/* USER CODE BEGIN -------------------------------------------------------------------*/
 	// Peripheral Configurations
 	HAL_GPIO_Init();
-	I2C_t *I2C1 = HAL_I2C_Init(I2C1_DRIVE);
-	CM_GPIO_t *CM_GPIO0 = HAL_CM_Init(CM_DRIVER_GPIO0);
+	I2C_t *I2C1 = HAL_I2C_Init(I2C1_DRIVER);
+	CM_GPIO_t *CM_GPIO0 = HAL_CM_Init(CM_GPIO0_CLOCK);
 	
 	// Set GPIO2 and GPIO3 as SDA and SCL pines
 	// Set GPIO4 as GPIO_CLOCK
@@ -35,7 +35,6 @@ int main()
 	// Setup XCLK signal for OV7670 as a clock of 10MHz
 	HAL_CM_Set_ClkSrc(CM_GPIO0, CM_SOURCE_PLLD);
 	HAL_CM_Set_Freq(CM_GPIO0, 10000000);
-	HAL_CM_Start(CM_GPIO0);
 	delay_ms(100);
 	
 	// Setup I2C with a clock of 100KHz to transmit 100Kbps
