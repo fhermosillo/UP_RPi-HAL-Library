@@ -44,3 +44,11 @@ int delay_us(long us)
 
     return res;
 }
+
+void delay_cycles(uint32_t cycles)
+{
+	for (int i = 0; i < cycles; ++i)
+	{
+		asm volatile ("");
+	}
+}
