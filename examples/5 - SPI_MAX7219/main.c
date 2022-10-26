@@ -38,12 +38,12 @@ int main()
 	/* Main Loop */
 	// Custom icon (created in https://xantorohara.github.io/led-matrix-editor/)
 	uint8_t arrow[][8]={{0b00011000,0b00011000,0b00011000,0b00011000,0b00011000,0b01111110,0b00111100,0b00011000}};
-	MAX7219_AnimateData(arrow, 1, 0, 60, MAX7219_DIR_LEFT);
+	MAX7219_AnimateData(arrow, 1, 7, 60, MAX7219_DIR_LEFT);
 	
 	const char msg[] = "Hola, este es un mensaje";
 	while(1)
 	{
-		MAX7219_AnimateText(msg, sizeof(msg), 60, MAX7219_DIR_RIGHT);
+		MAX7219_AnimateText(msg, sizeof(msg), 40, MAX7219_DIR_RIGHT);
 	}
 	/* USER CODE END -------------------------------------------------------------------*/
 	
