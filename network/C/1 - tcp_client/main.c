@@ -53,7 +53,7 @@ int main()
 			
 		char rxmsg[1024];
 		int rxlen = 0;
-		if((rxlen = SocketPi_Receive(hClientSocket, rxmsg, 1024, -1)) < 0)
+		if((rxlen = SocketPi_Receive(hClientSocket, rxmsg, 1024, PISOCKET_NO_TIMEOUT)) < 0)
 		{
 			puts("Reply failed");
 			break;
