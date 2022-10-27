@@ -12,8 +12,6 @@
 #include <sys/time.h>
 
 #define TIMEOUT_MS(X) X*1000
-#define NO_TIMEOUT		-1
-
 
 typedef void* SocketPiHandler_t;
 

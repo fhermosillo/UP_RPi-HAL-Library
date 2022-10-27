@@ -25,6 +25,11 @@ typedef enum
 	PWM_CHANNEL_1
 }ePWMChannel;
 
+typedef enum
+{
+	PWM_MODE_BAL=0,
+	PWM_MODE_MS
+} ePWMMode;
 typedef struct
 {
 	volatile uint32_t CTL;
@@ -56,7 +61,7 @@ typedef struct
 PWM_t *HAL_PWM_Init(ePWMDrive drive);
 void HAL_PWM_DeInit(PWM_t *PWMx);
 
-void HAL_PWM_Setup_Channel(PWM_t *PWMx, ePWMChannel channel);
+void HAL_PWM_Setup_Channel(PWM_t *PWMx, ePWMChannel channel, ePWMMode mode);
 
 uint32_t HAL_PWM_Set_Frequency(PWM_t *PWMx, ePWMChannel channel, uint32_t freq);
 

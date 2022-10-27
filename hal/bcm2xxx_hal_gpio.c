@@ -166,36 +166,21 @@ void HAL_GPIO_Write(uint8_t pin, eGPIOState state)
 	if(nreg == 0)
 	{
 		if(state == GPIO_HIGH)
-			bitset(GPIO->GPSET0,pin);
+			GPIO->GPSET0 = 1 << pin;
 		else
-			bitset(GPIO->GPCLR0,pin);
+			GPIO->GPCLR0 = 1 << pin;
 	} else
 	{
 		if(state == GPIO_HIGH)
-			bitset(GPIO->GPSET1,pin-32);
+			GPIO->GPSET1 = 1 << (pin-32);
 		else
-			bitset(GPIO->GPCLR1,pin-32);
+			GPIO->GPCLR1 = 1 << (pin-32);
 	}
 }
 
 void HAL_GPIO_Toggle(uint8_t pin)
 {
-	uint8_t nreg = pin/32;
-	
-	if(nreg == 0)
-	{
-		if(HAL_GPIO_Read(pin))
-			bitset(GPIO->GPCLR0,pin);
-		else
-			bitset(GPIO->GPSET0,pin);
-	} else
-	{
-		if(HAL_GPIO_Read(pin))
-			bitset(GPIO->GPCLR1,pin-32);
-		else
-			bitset(GPIO->GPSET1,pin-32);
-
-	}
+	HAL_GPIO_Write(pin,HAL_GPIO_Read(pin)^1);
 }
 
 

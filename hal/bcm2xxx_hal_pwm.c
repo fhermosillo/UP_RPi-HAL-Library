@@ -68,7 +68,7 @@ void HAL_PWM_DeInit(PWM_t *PWMx)
 	}
 }
 
-void HAL_PWM_Setup_Channel(PWM_t *PWMx, ePWMChannel channel)
+void HAL_PWM_Setup_Channel(PWM_t *PWMx, ePWMChannel channel, ePWMMode mode)
 {
 	// Reset channel configuration and setup channel configuration
 	// Output polarity 0=low -> 1:high
@@ -78,10 +78,12 @@ void HAL_PWM_Setup_Channel(PWM_t *PWMx, ePWMChannel channel)
 	if(channel == PWM_CHANNEL_0)
 	{
 		PWMx->CTL &= ~PWM_CHANNEL_0_MASK;
+		PWMx->CTL |= (uint32_t)mode << 7;
 	}
 	else
 	{
 		PWMx->CTL &= ~PWM_CHANNEL_1_MASK;
+		PWMx->CTL |= (uint32_t)mode << 15;
 	}
 }
 
@@ -92,14 +94,16 @@ uint32_t HAL_PWM_Set_Frequency(PWM_t *PWMx, ePWMChannel channel, uint32_t freq)
 	
 	// Setup PWM Clock Manager
 	CM_t *CM_PWM = HAL_CM_Init(CM_PWM_CLOCK);
-	//HAL_CM_Set_Clock(CM_PWM, CM_SOURCE_PLLD);
-	//HAL_CM_Set_Freq(CM_PWM,20000000);
-	//HAL_CM_Start(CM_PWM);
 
 	// Read frequency
 	uint32_t fsrc = HAL_CM_Get_Freq(CM_PWM);	// PWM clock frequency
+	if(fsrc == 0)
+	{
+		HAL_CM_Set_Clock(CM_PWM, CM_SOURCE_PLLD);
+		HAL_CM_Set_Freq(CM_PWM,MHZ(20));
+		fsrc = MHZ(20);
+	}
 	uint32_t rngx = fsrc/freq;		// Range register value
-	uint32_t fact = fsrc/rngx;	// Actual frequency	
 	
 	// Setup RANGE & Duty Cycle
 	int bittmp;
@@ -128,26 +132,23 @@ uint32_t HAL_PWM_Set_Frequency(PWM_t *PWMx, ePWMChannel channel, uint32_t freq)
 	HAL_PWM_Start(PWMx, channel);
 	
 	// Return actual frequency
-	return fact;
+	return rngx;
 }
 
 void HAL_PWM_Set_Duty(PWM_t *PWMx, ePWMChannel channel, float duty)
-{
-	if(duty > 100.0F || duty < 0.0F)
-		return;
-	
-	HAL_PWM_Stop(PWMx,channel);
-	
+{	
+	//HAL_PWM_Stop(PWMx,channel);
 	float dc = duty/100.0F;
 	if(channel == PWM_CHANNEL_0)
 	{
 		PWMx->DAT1 = (uint32_t)(PWMx->RNG1 * dc);
+		printf("DAT1 = %d\n",PWMx->DAT1);
 	} else
 	{
 		PWMx->DAT2 = (uint32_t)(PWMx->RNG2 * dc);
 	}
 	
-	HAL_PWM_Start(PWMx,channel);
+	//HAL_PWM_Start(PWMx,channel);
 }
 
 void HAL_PWM_Start(PWM_t *PWMx, ePWMChannel channel)
