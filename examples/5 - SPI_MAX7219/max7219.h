@@ -68,9 +68,6 @@ void MAX7219_PutChar(char c);
 void MAX7219_AnimateText(const char *msg, size_t mlen, uint32_t speed, eMAX7219Dir dir);
 void MAX7219_AnimateData(const uint8_t data[][8], size_t frames, uint8_t spacing, uint32_t speed, eMAX7219Dir dir);
 
-// MAX6675
-float MAX6675_Read(void);
-void MAX6675_Begin(void);
 
 #ifdef __cplusplus
 }
