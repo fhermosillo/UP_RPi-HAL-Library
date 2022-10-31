@@ -24,19 +24,25 @@ int main()
 	HAL_GPIO_Set_Mode(LED_PIN, GPIO_OUTPUT);
 	
 	/* SPI Config */
+	// Configure SPI0
+	HAL_GPIO_Set_Mode(GPIO_PIN_10, GPIO_FUNCTION_0); // MOSI
+	HAL_GPIO_Set_Mode(GPIO_PIN_9, GPIO_FUNCTION_0);// MISO
+	HAL_GPIO_Set_Mode(GPIO_PIN_11, GPIO_FUNCTION_0);// SCLK
+	HAL_GPIO_Set_Mode(GPIO_PIN_8, GPIO_FUNCTION_0);// CS0
+	HAL_GPIO_Set_Mode(GPIO_PIN_7, GPIO_FUNCTION_0);// CS1
 	
+	SPI_t *SPI0 = HAL_SPI_Init(SPI0_DRIVER);
+	HAL_SPI_Set_Baud(SPI0, MHZ(1));
 	// *****************************
 	// Main program
 	// *****************************
-	/* LED OFF */
-	HAL_GPIO_Write(LED_PIN, GPIO_LOW);
+	
 	
 	/* MAX7219 Initialization */
-	MAX7219_Begin();
-	//MAX6675_Begin();
+	MAX7219_Begin(SPI0, SPI_CHIP_0);	// Use CS0 from SPI0
 	
 	/* Main Loop */
-	// Custom icon (created in https://xantorohara.github.io/led-matrix-editor/)
+	// Custom icon (created by https://xantorohara.github.io/led-matrix-editor/)
 	uint8_t arrow[][8]={{0b00011000,0b00011000,0b00011000,0b00011000,0b00011000,0b01111110,0b00111100,0b00011000}};
 	MAX7219_AnimateData(arrow, 1, 7, 60, MAX7219_DIR_LEFT);
 	
