@@ -3,6 +3,10 @@
 #include <time.h>
 #include "socketPi.h"
 
+// Define here the server IP address
+#define SERVER_IP "192.168.1.11"
+// Define here the server port
+#define SERVER_PORT 16000
 
 int main()
 {
@@ -30,7 +34,7 @@ int main()
 		return -1;
 	}
 	
-	if(SocketPi_Bind(hServerSocket,NULL,16000) != 0)
+	if(SocketPi_Bind(hServerSocket,SERVER_IP,SERVER_PORT) != 0)
 	{
 		puts("Error Bind Address");
 		SocketPi_Close(hServerSocket);
