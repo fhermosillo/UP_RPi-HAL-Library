@@ -7,6 +7,7 @@ void *peri_base_ptr = MAP_FAILED;
 size_t peri_size = 0;
 
 static uint32_t core_freq = RPI_CORE_FREQ_HZ;
+static int sched_policy = SCHED_RR;
 
 void HAL_read_peri_addr(uint32_t model, uint32_t *addr, size_t *sz)
 {
@@ -126,11 +127,48 @@ uint32_t HAL_get_core_freq(void)
 }
 
 
-void HAL_Switch_RealTime(void)
+void HAL_Thread_Set_RealTime(void)
 {
 	struct sched_param sp;
 	memset(&sp, 0, sizeof(sp));
+	
 	sp.sched_priority = sched_get_priority_max(SCHED_FIFO);
 	sched_setscheduler(0, SCHED_FIFO, &sp);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
+	
+	sched_policy = SCHED_FIFO;
+}
+
+int HAL_Thread_Set_Priority(int priority)
+{
+	struct sched_param sched ;
+	memset (&sched, 0, sizeof(sched));
+       
+	if (priority > sched_get_priority_max (sched_policy))
+		sched.sched_priority = sched_get_priority_max (sched_policy) ;
+	else
+		sched.sched_priority = priority;
+	
+	return sched_setscheduler(0, sched_policy, &sched);
+}
+
+void HAL_Thread_Delay_us(unsigned long us)
+{
+	usleep(us);
+}
+
+void HAL_Thread_Delay_ms(unsigned long ms)
+{
+	usleep(ms*1000);
+}
+
+void HAL_Thread_Delay(float t)
+{
+	unsigned long s = t;
+	unsigned long us = (t - s)*1000000;
+	
+	if(s>0)
+		sleep(s);
+	if(us > 0)
+		usleep(us);
 }

@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <sched.h>
 
 /* -------------------------------------------------------------------- */
 /* 							Public Defines 								*/
@@ -35,6 +36,7 @@
 
 #define MHZ(x)	(x)*1000000
 #define KHZ(x)	(x)*1000
+
 
 /* -------------------------------------------------------------------- */
 /* 							External Variables 							*/
@@ -98,7 +100,12 @@ volatile uint32_t *HAL_get_peri_base(void);
 uint32_t HAL_get_core_freq(void);
 
 
-void HAL_Switch_RealTime(void);
+void HAL_Thread_Set_RealTime(void);
 
+int HAL_Thread_Set_Priority(int priority);
+
+void HAL_Thread_Delay_us(unsigned long us);
+void HAL_Thread_Delay_ms(unsigned long ms);
+void HAL_Thread_Delay(float t);
 
 #endif /* __BCM2XXX_H */
