@@ -2,7 +2,10 @@
 #include "bcm2xxx_hal_gpio.h"
 #include "socketPi.h"
 
-
+// Define here the server IP address
+#define SERVER_IP "192.168.1.11"
+// Define here the server port
+#define SERVER_PORT 16000
 int main()
 {
 	/* OPEN PERIPHERAL'S MEMORY */
@@ -35,13 +38,11 @@ int main()
 	// *****************************************************************
 	// Server sends time when client requests
 	// Client request only six times
-	char ipServer[] = "192.168.1.11";
-	int portServer = 16000;
 	int cnt = 0;
 	while(cnt++ < 6)
 	{
 		char *txmsg = "time";
-		if(SocketPi_SendTo(hClientSocket,txmsg,4,ipServer,portServer) < 0)
+		if(SocketPi_SendTo(hClientSocket,txmsg,4,SERVER_IP,SERVER_PORT) < 0)
 		{
 			puts("Request failed");
 			break;
