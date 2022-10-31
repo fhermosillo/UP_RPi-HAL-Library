@@ -2,6 +2,10 @@
 #include "bcm2xxx_hal_gpio.h"
 #include "socketPi.h"
 
+// Define here the server IP address
+#define SERVER_IP "192.168.1.11"
+// Define here the server port
+#define SERVER_PORT 16000
 
 int main()
 {
@@ -30,7 +34,7 @@ int main()
 	}
 	
 	// Connect to server
-	if(SocketPi_Connect(hClientSocket, "192.168.1.11", 16000) == -1)
+	if(SocketPi_Connect(hClientSocket, SERVER_IP, SERVER_PORT) == -1)
 	{
 		printf("Socket.Error: Connecting to server\n");
 		return -1;
