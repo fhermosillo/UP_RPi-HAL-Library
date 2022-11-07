@@ -142,7 +142,6 @@ void HAL_PWM_Set_Duty(PWM_t *PWMx, ePWMChannel channel, float duty)
 	if(channel == PWM_CHANNEL_0)
 	{
 		PWMx->DAT1 = (uint32_t)(PWMx->RNG1 * dc);
-		printf("DAT1 = %d\n",PWMx->DAT1);
 	} else
 	{
 		PWMx->DAT2 = (uint32_t)(PWMx->RNG2 * dc);
