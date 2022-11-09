@@ -1,0 +1,11 @@
+How to Install OpenCV
+1. Run the following commands in terminal
+	sudo apt-get install libqt5gui5 libqt5webkit5 libqt5test5
+	sudo apt-get install libhdf5-dev libhdf5-serial-dev libatlas-base-dev libjasper-dev
+	pip3 install -U numpy
+	pip3 install opencv-python
+
+2. In terminal type
+	python3
+	import cv2
+	print(cv2.__version__)
